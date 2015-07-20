@@ -1,0 +1,323 @@
+<apex:page docType="html-5.0" sidebar="false"  showheader="false" cache="true" controller="NearbyRecords" >
+
+<style>
+html, body { height: 100%; }
+.page-map, .ui-content
+{ width: 100%; height:100%; padding: 10; }
+
+</style>
+
+<style>
+.container{
+position:absolute;
+width: 100%;
+border: 1px solid #999;
+}
+
+@media all and orientation
+</style>
+    <title>Search Records</title>
+
+    <meta charset="utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    
+    <!-- jQuery Mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0" />
+    <apex:stylesheet value="https://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.css" />
+    <apex:includeScript value="https://code.jquery.com/jquery-1.10.2.min.js"/>
+    <apex:includeScript value="https://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.js"/>
+    <!-- This API Client ID with Digital Signature has to be there to avoid Errors --> 
+
+    <script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyAUMpy_Zs38v1mFSimLznsLWO6e8IKLBto&sensor=false"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script> 
+
+    <!-- Set up the map to take up the whole window -->
+    <script>
+
+        var LAT = null;
+        var LONG = null;
+        var ObjectType = null;
+        var ObjectName = null;
+        var infowindow = new google.maps.InfoWindow;
+        var geocoder = new google.maps.Geocoder();
+        var zip = null;
+        var masterObject = [];
+         
+        //Find GPS Location
+        //findLocation();
+        function findRecordsByFilter(){
+            var t = document.getElementById("SelectObjects");
+            ObjectName = t.options[t.selectedIndex].value;
+            zip = document.getElementById("EnterZip").value;
+            
+            if(zip == ''){
+                alert("Enter Zipcode");
+            }
+            else{
+                zipSearchMethod(zip, ObjectName);
+                setMapSize();
+            }
+        
+        }
+        //
+        function zipSearchMethod(zip, ObjectName){
+        
+        
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.NearbyRecords.sObjectsByZip}',
+                zip, ObjectName, 
+                    function(result, event){
+                        if (event.status) {
+                        //console.log(result);
+                        getCoord(result);
+                    } else if (event.type === 'exception') {
+                //exception Handling
+                alert("Exception occurred during remoteaction callout of sObjectsByZip");
+                } else {
+                    }
+                    },
+                    {escape: true});       
+        }
+        
+        function getCoord(records){
+            var lt;
+            var lg;
+            //var zipLatLng = getGeoCode(zip);
+            var tempRC = records;
+            var rc
+            createMap(zip);
+            for(var i=0;i<tempRC.length;i++)
+            {               
+                if(tempRC[i].Address != '')
+                {   
+                     //tempRC [i].LatLng = getGeoCode(records[i].Address).latitude;
+                     //console.log(tempRC[i]);
+                     var rc = tempRC[i];
+                     geocoder.geocode( { 'address': tempRC[i].Address}, function( rc ) {
+                        return(function(results, status){
+                            if (status == google.maps.GeocoderStatus.OK) {
+                              //console.log(results[0].geometry.location);
+                              lt = results[0].geometry.location.lat();
+                              lg = results[0].geometry.location.lng();
+                              createMarker(lt, lg, rc);
+                              console.log(rc);
+                                                          
+                     } else {
+                        alert("Geocode was not successful for the following reason: " + status);
+                     }
+                     });
+                     }(rc));
+                                 
+                }
+            }
+            
+            //setupMap(zipLatLng, tempRC);
+                        //console.log(zipLatLng);
+            
+        
+        }
+        
+       
+        
+        function createMap(zip)
+        {
+            
+             map = null;
+             mapDiv = document.getElementById("map-canvas");
+            var mapOptions = {
+            zoom: 8,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            mapMaker: true
+         };
+            map = new google.maps.Map(mapDiv,mapOptions);
+        
+        }
+        
+        function createMarker(lt, lg, rc){
+        var content= '<a href="/'+rc.ObjectId+'">'+rc.recName+'</a><br/>'+'Name: '+ rc.recName + '<br/>' + 'Email:'+ rc.Email + '<br/>' + 'Phone:'+ rc.Phone;
+            //Create the callout that will pop up
+            //on the marker
+            //Place the marker
+            
+            map.setCenter(new google.maps.LatLng(lt, lg));
+            var marker = new google.maps.Marker({map: map,position: new google.maps.LatLng(lt, lg), icon:'http://maps.google.com/mapfiles/ms/icons/green-dot.png'});
+            //Create an action to open the callout
+            google.maps.event.addListener(marker, 'click', function(){
+            //infowindow.close();//hide the infowindow
+            infowindow.setContent(content);//update the content for this marker
+            infowindow.open(map, marker);//"move" the info window to the clicked marker and open it
+  });
+        
+        }
+        
+        
+        
+        function findLocation() {
+            if(navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition (
+                        // successFunction
+                        function(position) {
+                            LAT = position.coords.latitude;
+                            LONG = position.coords.longitude;
+                            onPageLoad();
+                            setMapSize();
+                        },
+                        // errorFunction
+                        function(position) {
+                            alert("Geolocation not available");
+                        }
+                    );
+            } else {
+                alert("navigator.geolocation is not available");
+            }
+        }
+        
+        function onPageLoad() {
+        
+        var e = document.getElementById("SelectObjects");
+        ObjectName = e.options[e.selectedIndex].value;
+
+        
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.NearbyRecords.getContacts}',
+                LAT, LONG, ObjectName, 
+                    function(result, event){
+                        if (event.status) {
+                        console.log(result);
+                        load(LAT, LONG, result);
+                    } else if (event.type === 'exception') {
+                //exception case code
+                } else {
+                    }
+                    },
+                    {escape: true});
+          
+        }
+        
+        
+function load(LAT, LONG, contacts) {
+    map = null;
+    mapDiv = document.getElementById("map-canvas");
+    var mapOptions = {
+          center: new google.maps.LatLng(LAT, LONG),
+          zoom: 10,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          mapMaker: true
+    };
+    map = new google.maps.Map(mapDiv,mapOptions);
+   
+      
+    locationMarker();
+    for(var c=0; c<contacts.length; c++){
+     tempC = contacts[c];
+     setupMarker();
+     }
+}
+
+function setupMarker(){
+
+   var content= '<a href="/'+tempC.Id+'">'+tempC.Name+'</a><br/>'+'Name: '+ tempC.Name + '<br/>' + 'Email:'+ tempC.Email + '<br/>' + 'Phone:'+ tempC.Phone;
+  //Create the callout that will pop up
+  //on the marker
+  //var infowindow = new google.maps.InfoWindow({content: content});
+  //Place the marker
+  var marker = new google.maps.Marker({map: map,position: new google.maps.LatLng(tempC.Location__Latitude__s, tempC.Location__Longitude__s), icon:'http://maps.google.com/mapfiles/ms/icons/green-dot.png'});
+  //Create an action to open the callout
+  google.maps.event.addListener(marker, 'click', function(){
+        //infowindow.close();//hide the infowindow
+        infowindow.setContent(content);//update the content for this marker
+        infowindow.open(map, marker);//"move" the info window to the clicked marker and open it
+  });
+  
+}
+function locationMarker(){
+
+  var marker = new google.maps.Marker({map: map,position: new google.maps.LatLng(LAT, LONG), icon:'http://maps.google.com/mapfiles/ms/icons/red-dot.png'});
+}
+
+function setMapSize(){
+    var h = $("#Filter").height();
+    var t = $(window).height();
+    var r = t - h - 10;
+    r = r+"px";                           
+    console.log(h+"  "+t+"  "+r);
+    $("#myMap").addClass("container");
+    $("#myMap").css({height: r});
+}
+
+  
+
+//$(#NA).click(function(e){});   
+
+    //Run the initialize function when the window loads
+  //google.maps.event.addDomListener(window, 'load', findLocation);
+ //google.maps.event.addDomListener(window, 'load', onPageLoad);
+</script>
+<body>
+    <div data-role="page" >
+        <div data-role="popup" id="statusPopupID" class="ui-content" data-content-theme="a">
+        Please wait...<br/>
+        </div>
+        <apex:form >
+            <div data-role="collapsible" data-collapsed="false" data-content-theme="c" id="Filter">
+            <h3> <div style="white-space:normal"> Search Records</div></h3>
+            <p>
+                <!-- Search Layout -->
+<!--                 <Label for="{!$component.SelectObjects}"> Select Filter Criteria Below </Label> -->
+                <table width="%100" >
+                    <tr>
+                        <td><label for="{!$component.SelectObjects}"> Select Records</label></td>
+                        <td>
+                            <select id="SelectObjects" html-data-role="fieldcontain" html-data-mini="true">
+                                <option value="Account"> Account</option>
+                                <option value="Contact"> Contact</option>
+                                
+                            </select>
+                        
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="{!$Component.EnterZip}"> Enter Zip</label></td>
+                        <td>
+                            <input type="number" pattern="[0-9]*" html-name="EnterZip" id="EnterZip" value="{!ZipCode}" />
+                        
+                        </td>
+                    </tr>
+                    <tr>
+                            <td/>
+                            <td>
+<!--                                 <a href="/df" data-role="button" data-inline="true" data-mini="true" data-theme="b">Search By Zip</a> -->
+<!--                                  <apex:actionFunction name="jsSubmitData" action="{!ApplyFilter}"/> --> 
+                                    <apex:commandButton action="javascript:findRecordsByFilter()"  value="Search By Zip" rerender="myMap" html-data-inline="true" html-data-mini="true" html-data-theme="b"/>
+                                     
+                            </td>
+                            
+                    </tr>
+                    <tr>
+                            <td/>
+                            <td>
+                                <apex:commandButton action="javascript:findLocation()"  value="Nearby Records" id="NA" rerender="myMap" html-data-inline="true" html-data-mini="true" html-data-theme="b"/>
+                            </td>
+                    </tr>
+                    
+                </table>
+                </p>
+                </div>
+           <p> 
+           <div>
+           
+           
+           <div id="myMap" data-content-theme="c">
+                 
+                    <div id="map-canvas"  Style="height:100% ; width:100%" ></div>
+                    
+                </div>
+           
+           </div>
+           </p>
+           </apex:form>
+
+          </div>      
+</body>
+
+</apex:page>

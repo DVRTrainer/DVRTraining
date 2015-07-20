@@ -1,0 +1,19 @@
+{
+    "username": "madanmohan8051@gmail.com", 
+    "environment": "developer", 
+    "project_name": "DVRTraining", 
+    "workspace": "/Users/madanmorusu/Documents/workspaces", 
+    "org_url": "", 
+    "namespace": "", 
+    "id": "FX3QUOK26MCC6TKHAT8QVNF3V70XY9IG", 
+    "metadata_container": "1dcG0000000UzCaIAK", 
+    "subscription": [
+        "ApexClass", 
+        "ApexComponent", 
+        "ApexPage", 
+        "ApexTrigger", 
+        "StaticResource", 
+        "CustomObject", 
+        "Profile"
+    ]
+}

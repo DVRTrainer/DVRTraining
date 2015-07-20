@@ -1,0 +1,85 @@
+<apex:page sidebar="false" showheader="false"  >
+<apex:form >
+
+<!-- jQuery Mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <apex:stylesheet value="https://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.css" />
+    <apex:includeScript value="https://code.jquery.com/jquery-1.9.1.min.js"/>
+    <apex:includeScript value="https://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"/>
+    
+    
+<!-- This API key needs to be set up for there to beno JS errors -->
+
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyAHjGLkaWj9jQLTMY0KL48bcQoXLzelLwU&sensor=false"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script> 
+
+<!-- Set up the map to take up the whole window -->
+
+<style>
+html, body { height: 100%; }
+.page-map, .ui-content, #map-canvas
+{ width: 100%; height:100%; padding: 0; }
+#map-canvas { height: min-height: 100%; }
+</style>
+<script>
+
+         var LAT = null;
+        var LONG = null;
+        // Find GPS Location
+        function findLocation() {
+            if(navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition (
+                        // successFunction
+                        function(position) {
+                            LAT = position.coords.latitude;
+                            LONG = position.coords.longitude;
+                            load();
+                        },
+                        // errorFunction
+                        function(position) {
+                            alert("Geolocation not available");
+                        }
+                    );
+            } else {
+                alert("navigator.geolocation is not available");
+            }
+        }
+        
+function load() {
+    map = null;
+    mapDiv = document.getElementById("map-canvas");
+    var mapOptions = {
+          center: new google.maps.LatLng(LAT, LONG),
+          zoom: 10,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          mapMaker: true
+    };
+    map = new google.maps.Map(mapDiv,mapOptions);
+    setupMarker();
+}
+
+function setupMarker(){
+  //var id = "001G000000qHviN"; 
+   var content='<a href src="/001G000000qHviN" >'+ 'warehouse.Name' + '</a><br/>'+ 'warehouse.Street_Address__c' + '<br/>' + 'warehouse.City__c' + '<br/>' + 'warehouse.Phone__c';
+  //Create the callout that will pop up
+  //on the marker
+  var infowindow = new google.maps.
+  InfoWindow({content: content});
+  //Place the marker
+  var marker = new google.maps.Marker({map: map,position: new google.maps.LatLng(LAT, LONG)});
+  //Create an action to open the callout
+  google.maps.event.addListener(marker, 'click', function(){
+  infowindow.open(map, marker);
+  });
+}
+    
+
+    //Run the initialize function when the window loads
+ google.maps.event.addDomListener(window, 'load', findLocation);
+</script>
+<body style="font-family: Arial; border: 0 none;">
+<div id="map-canvas" style="height: 600Px" ></div>
+<!--  <apex:commandButton action="/001G000000qHviN" value="Save" style="bottom:0px;right:0px;padding:5px 10px; font-size:13px; font-weight:bold; line-height:18px;background-color:#0271BF;background-image:-moz-linear-gradient(#2DADDC, #0271BF);background-repeat:repeat-x;border-color:#096EB3;" /> -->
+</body>
+</apex:form>
+</apex:page>

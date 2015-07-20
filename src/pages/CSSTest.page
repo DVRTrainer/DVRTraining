@@ -1,0 +1,23 @@
+<apex:page >
+ <style>
+     .content-block{
+     width:50%;
+     float: left;
+     }
+     
+     @media screen and (max-width:767px){
+     .content-block{
+     width: 100%;
+     float:none;
+     }
+     }
+ </style>
+
+ <div class="content-block">
+     top on the phone left on the big screens
+ </div>
+ 
+ <div class="content-block">
+     bottom on the phone, right on the screen. 
+ </div>
+</apex:page>
