@@ -285,6 +285,19 @@
         "mmState": "clean", 
         "type": "ApexPage"
     }, 
+    "MyFirstVFPage.page": {
+        "createdById": "005G00000025VrzIAE", 
+        "createdByName": "Madan Morusu", 
+        "createdDate": "2015-07-20 20:17:55", 
+        "fileName": "unpackaged/pages/MyFirstVFPage.page", 
+        "fullName": "MyFirstVFPage", 
+        "id": "066G0000002aOzQIAU", 
+        "lastModifiedById": "005G00000025VrzIAE", 
+        "lastModifiedByName": "Madan Morusu", 
+        "lastModifiedDate": "2015-07-20 21:06:57", 
+        "mmState": "clean", 
+        "type": "ApexPage"
+    }, 
     "NearbyAccounts.cls": {
         "createdById": "005G00000025VrzIAE", 
         "createdByName": "Madan Morusu", 

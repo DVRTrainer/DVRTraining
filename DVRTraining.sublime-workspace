@@ -722,6 +722,10 @@
 		]
 	},
 	"menu_visible": true,
+	"output.MavensMate-OutputPanel":
+	{
+		"height": 114.0
+	},
 	"output.find_results":
 	{
 		"height": 0.0

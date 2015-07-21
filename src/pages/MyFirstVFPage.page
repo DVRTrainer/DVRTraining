@@ -1,0 +1,28 @@
+<apex:page standardcontroller="Account" sidebar="false" standardStylesheets="false" >
+    <style>
+    
+    </style>
+    <apex:includeScript value="{!URLFOR($Resource.ProgressBar)}"/>
+    <apex:form >
+     <apex:pageblock title="Owner Information">
+         <apex:pageBlockSection columns="3" >
+			<apex:inputField value="{!Account.OwnerId}"/>  
+            <apex:inputField value="{!Account.Name}"/>      
+
+			<apex:pageBlockSectionItem >
+                <apex:outputLabel value="Current UserName :" for="UserName"/>
+                <apex:outputText id="UserName">{!$User.FirstName} {!$User.LastName}</apex:outputText>
+            </apex:pageBlockSectionItem>   
+         </apex:pageBlockSection>
+         <apex:outputlink value="{!URLFOR($Action.Account.New)}">New Account</apex:outputlink>
+        <!-- <apex:pageBlockButtons>
+         <apex:commandlink action="{!$Action.Account.New}" value="New Account"/>
+         </apex:pageBlockButtons> -->
+         <apex:pageBlockButtons location="both">
+              <apex:commandButton action="{!save}" value="Save"/>
+              <apex:commandButton action="{!cancel}" value="Cancel"/>   
+             
+         </apex:pageBlockButtons>
+     </apex:pageblock>
+    </apex:form>
+</apex:page>
