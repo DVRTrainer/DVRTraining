@@ -1,0 +1,18 @@
+<apex:page controller="sampleCustomController" >
+    <apex:form >
+    	<apex:pageBlock >
+        	<apex:pageBlockSection rendered="{!displayAccountSection}">
+            <apex:outputField value="{!Acct.Id}"/>
+            <apex:outputField value="{!Acct.Phone}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection rendered="{!!displayAccountSection}">
+            <apex:outputField value="{!Acct.Name}"/>
+            <apex:outputField value="{!Acct.Id}"/>
+            </apex:pageBlockSection>
+            <apex:pageblockbuttons >
+            	<apex:commandButton action="{!displayControl}" value="Toggle Display"/>
+            </apex:pageblockbuttons>
+        </apex:pageBlock>
+    
+    </apex:form>
+</apex:page>

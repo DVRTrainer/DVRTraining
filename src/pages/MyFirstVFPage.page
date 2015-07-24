@@ -1,14 +1,13 @@
-<apex:page standardcontroller="Account" sidebar="false" standardStylesheets="false" >
-    <style>
-    
-    </style>
-    <apex:includeScript value="{!URLFOR($Resource.ProgressBar)}"/>
+<apex:page standardcontroller="Account" sidebar="false" standardStylesheets="false" extensions="AccountExtension">
     <apex:form >
-     <apex:pageblock title="Owner Information">
-         <apex:pageBlockSection columns="3" >
+     <apex:outputPanel id="OP01">
+     <apex:pageblock title="Owner Information" id="PB01">
+         <apex:pageBlockSection columns="2" >
 			<apex:inputField value="{!Account.OwnerId}"/>  
-            <apex:inputField value="{!Account.Name}"/>      
-
+            <apex:inputField value="{!Account.Name}"/>
+             <apex:inputField value="{!Account.Type}">
+                 <apex:actionSupport event="onchange" reRender="PB01"/>
+             </apex:inputField>`
 			<apex:pageBlockSectionItem >
                 <apex:outputLabel value="Current UserName :" for="UserName"/>
                 <apex:outputText id="UserName">{!$User.FirstName} {!$User.LastName}</apex:outputText>
@@ -20,9 +19,33 @@
          </apex:pageBlockButtons> -->
          <apex:pageBlockButtons location="both">
               <apex:commandButton action="{!save}" value="Save"/>
-              <apex:commandButton action="{!cancel}" value="Cancel"/>   
-             
+              <apex:commandButton action="{!cancel}" value="Cancel"/>
+              <apex:commandButton action="{!addOpportunity}" value="Add Opportunity" rerender="OP01, PB01"/> 
          </apex:pageBlockButtons>
+         <apex:pageBlockSection title="Customer Direct Section" rendered="{!Account.Type == 'Customer - Direct'}">
+         	This is a Customer DirectAccount please contact res dept. This should be visible only if Type is Customer-Direct
+         </apex:pageBlockSection>
+         <apex:pageBlockTable value="{!listOpps}" var="o" id="sampleTable">
+           <apex:column headerValue="Record Name">
+               <apex:outputLink value="/{!o.id}">{!o.Name}</apex:outputLink>
+           </apex:column>
+           <apex:column value="{!o.stagename}"/>
+        </apex:pageBlockTable>
+        <apex:pageblocksection title="Add Opps">
+        	<apex:pageBlockSectionItem >
+                <apex:outputlabel value="Opportunity Name"/>
+                <apex:inputText value="{!OppName}"/>
+            </apex:pageBlockSectionItem> 
+			<apex:pageBlockSectionItem >
+                <apex:outputlabel value="Opportunity Close Date"/>
+                <apex:inputText value="{!OppDate}"/>
+            </apex:pageBlockSectionItem>             
+        </apex:pageblocksection>
      </apex:pageblock>
+     <apex:repeat value="{!Account.contacts}" var="c">
+         <apex:outputText >{!c.Name}</apex:outputText> <br/>
+      </apex:repeat>
+      
+      </apex:outputPanel>
     </apex:form>
 </apex:page>

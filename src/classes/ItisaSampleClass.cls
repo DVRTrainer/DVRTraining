@@ -1,10 +1,13 @@
 Public class ItisaSampleClass{
 
+    public Account Acct{get; set;}
+    public boolean displayAccountSection{get; set;}
 private static String s1;
 private static String s2;
 
     public ItisaSampleClass(){
-        
+       Acct = new Account(); 
+       displayAccountSection = false;
     }
     
 public ItisaSampleClass(String ss, String sd){
@@ -53,4 +56,8 @@ public ItisaSampleClass(String ss, String sd){
         string s;
     }
     
+    public void samplepg(){
+      Acct = [Select Id, Name From Account Where Id= '001G000000qHviN'];
+        
+    }
 }
