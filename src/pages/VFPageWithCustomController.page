@@ -1,13 +1,15 @@
-<apex:page controller="sampleCustomController" >
+<apex:page controller="sampleCustomController" action="{!actionMethod}">
     <apex:form >
     	<apex:pageBlock >
+            
         	<apex:pageBlockSection rendered="{!displayAccountSection}">
-            <apex:outputField value="{!Acct.Id}"/>
-            <apex:outputField value="{!Acct.Phone}"/>
+            <apex:outputField value="{!AcctRec.Id}"/>
+            <apex:outputField value="{!AcctRec.Phone}"/>
             </apex:pageBlockSection>
             <apex:pageBlockSection rendered="{!!displayAccountSection}">
-            <apex:outputField value="{!Acct.Name}"/>
-            <apex:outputField value="{!Acct.Id}"/>
+            <apex:outputField value="{!AcctRec.Name}"/>
+            <apex:outputField value="{!AcctRec.Id}"/>
+                
             </apex:pageBlockSection>
             <apex:pageblockbuttons >
             	<apex:commandButton action="{!displayControl}" value="Toggle Display"/>

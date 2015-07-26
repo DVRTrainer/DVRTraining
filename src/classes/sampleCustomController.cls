@@ -1,11 +1,28 @@
 public class sampleCustomController {
     
-    public Account Acct{get; set;}
+    public Account AcctRec{get; set;}
+    
+    public Contact ct{
+        get{
+            if(ct == Null){
+                ct = new contact();
+            } 
+          return ct;   
+        }
+        set{
+            ct = value;
+            displayControl();
+        }
+    }
     public boolean displayAccountSection{get; set;}
 
     public sampleCustomController(){
-       Acct = [Select Id, Name From Account Where Id= '001G000000qHviN'];
+       AcctRec =  new Account();
+       List<Account> Acct = [Select Id, Name, Phone, BillingPostalCode From Account];
        displayAccountSection = false;
+       contact c = ct;
+        ct = c;
+       
     }
     
     public void displayControl(){
@@ -13,5 +30,13 @@ public class sampleCustomController {
             displayAccountSection = false;
         else
             displayAccountSection = true;
+    }
+    
+    public pagereference actionMethod(){
+        Account a = new Account();
+        a.name = 'Madan Morusu';
+        insert a;
+        pagereference pg = new pagereference('/'+a.id);
+        return pg;
     }
 }

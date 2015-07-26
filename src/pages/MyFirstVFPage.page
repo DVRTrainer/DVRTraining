@@ -1,4 +1,4 @@
-<apex:page standardcontroller="Account" sidebar="false" standardStylesheets="false" extensions="AccountExtension">
+<apex:page standardcontroller="Account" sidebar="false" standardStylesheets="false" extensions="AccountExtension" >
     <apex:form >
      <apex:outputPanel id="OP01">
      <apex:pageblock title="Owner Information" id="PB01">
