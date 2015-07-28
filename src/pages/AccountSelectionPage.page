@@ -1,0 +1,37 @@
+<apex:page controller="AccountSelectionController" tabStyle="Account">
+    <script>
+    
+    </script>
+    <apex:form >
+        <apex:outputPanel id="OP01">
+        <apex:pageMessages />
+    	<apex:pageBlock >
+         	<apex:pageBlockTable value="{!listAW}" var="aw">
+            	<apex:column headervalue="Select" headerClass="">
+                    <apex:inputCheckbox value="{!aw.isselected}"/>
+                </apex:column>
+                <apex:column headerValue="Name">
+                	<apex:facet name="header">
+                        <apex:commandLink action="{!chnageSortDir}" value="Name" reRender="OP01">
+                        <apex:param name="sortField" value="Name" assignto="{!sortField}"/>
+                        </apex:commandLink>
+                    </apex:facet>
+                    <apex:outputField value="{!aw.acct.name}"/>
+                </apex:column>
+                <apex:column headervalue="Phone Number">
+                    <apex:inputfield value="{!aw.acct.phone}"/>
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:panelgrid >
+            	<apex:commandLink action="{!next}" value="Next"/>
+                <apex:commandLink action="{!previous}" value="Previous"/>
+
+            </apex:panelgrid>
+            <apex:pageBlockButtons location="both">
+            <apex:commandButton value="Save" action="{!save}"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+            
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

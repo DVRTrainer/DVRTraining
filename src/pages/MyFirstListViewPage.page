@@ -1,25 +1,23 @@
-<apex:page standardController="Account" recordSetVar="Accounts">
-    <apex:form >
-     <apex:outputpanel id="OP01">
-    <apex:pageblock >
-        <apex:selectlist value="{!filterID}" size="1">
-        	<apex:actionsupport event="onchange" rerender="OP01">
-            </apex:actionsupport>
-            <apex:selectOptions value="{!listviewoptions}"></apex:selectOptions>
-        </apex:selectlist>
-        <apex:pageblocktable value="{!Accounts}" var="saccounts">
-        	<apex:column headerValue="Name">
-                <apex:outputlink value="/{!saccounts.Id}">{!saccounts.name}</apex:outputlink>
-            </apex:column>
-            <apex:column headerValue="Name">
-            	<apex:outputField value="{!saccounts.site}"/>
-            </apex:column>
-    	</apex:pageblocktable>
-        <apex:panelgrid columns="5">
-    	<apex:commandLink action="{!previous}" value="previous"/>
-        <apex:commandLink action="{!next}" value="next"/>
-    	</apex:panelgrid>
-    </apex:pageblock>
-    	</apex:outputpanel>
-	</apex:form>
+<apex:page standardController="Opportunity" 
+           recordSetVar="opportunities"
+           tabStyle="Opportunity" sidebar="false">
+  <apex:form >
+    <apex:pageBlock >
+      <apex:pageMessages />
+      <apex:pageBlockButtons >
+        <apex:commandButton value="Save" 
+                            action="{!save}"/>
+      </apex:pageBlockButtons>
+      <apex:pageBlockTable value="{!opportunities}" 
+                           var="opp">
+        <apex:column value="{!opp.name}"/>
+        <apex:column headerValue="Stage">
+          <apex:inputField value="{!opp.stageName}"/>
+        </apex:column>
+        <apex:column headerValue="Close Date">
+          <apex:inputField value="{!opp.closeDate}"/>
+        </apex:column>
+      </apex:pageBlockTable>      
+    </apex:pageBlock>
+  </apex:form>
 </apex:page>
